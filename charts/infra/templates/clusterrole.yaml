@@ -1,0 +1,160 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "connector.fullname" . }}
+  labels:
+{{- include "connector.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources:
+      - users
+      - groups
+    verbs:
+      - impersonate
+  - apiGroups: [""]
+    resources:
+      - pods
+      - services
+      - namespaces
+      - nodes
+    verbs:
+      - list
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterroles
+    verbs:
+      - get
+      - list
+      - bind
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - rolebindings
+      - clusterrolebindings
+    verbs:
+      - get
+      - list
+      - create
+      - delete
+      - update
+---
+{{- if and .Values.defaultRoles.create .Values.defaultRoles.roles.exec }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: exec
+  labels:
+    app.infrahq.com/include-role: "true"
+{{- include "connector.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+      - daemonsets
+    verbs:
+      - get
+  - apiGroups: [""]
+    resources:
+      - pods/exec
+    verbs:
+      - get
+      - create
+{{- end }}
+---
+{{- if and .Values.defaultRoles.create .Values.defaultRoles.roles.logs }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: logs
+  labels:
+    app.infrahq.com/include-role: "true"
+{{- include "connector.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+      - daemonsets
+    verbs:
+      - get
+  - apiGroups: [""]
+    resources:
+      - pods/log
+    verbs:
+      - get
+      - watch
+{{- end }}
+---
+{{- if and .Values.defaultRoles.create .Values.defaultRoles.roles.portForward }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: port-forward
+  labels:
+    app.infrahq.com/include-role: "true"
+{{- include "connector.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - services
+    verbs:
+      - get
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+      - daemonsets
+    verbs:
+      - get
+  - apiGroups: [""]
+    resources:
+      - pods/portforward
+    verbs:
+      - get
+      - create
+{{- end }}
