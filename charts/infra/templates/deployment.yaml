@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "connector.fullname" . }}
+  labels:
+{{- include "connector.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+{{- include "connector.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+{{- include "connector.podLabels" . | nindent 8 }}
+      annotations:
+{{- include "connector.podAnnotations" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      serviceAccountName: {{ include "connector.serviceAccountName" . }}
+      imagePullSecrets:
+{{- .Values.imagePullSecrets | toYaml | nindent 8 }}
+      securityContext:
+{{- .Values.podSecurityContext | toYaml | nindent 8 }}
+      containers:
+        - name: connector
+          securityContext:
+{{- .Values.securityContext | toYaml | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - connector
+            - -f
+            - /etc/infrahq/infra.yaml
+            - --log-level
+            - {{ .Values.config.logLevel | default "info" }}
+          env:
+{{- .Values.env | toYaml | nindent 12 }}
+          envFrom:
+{{- .Values.envFrom | toYaml | nindent 12 }}
+          volumeMounts:
+            - name: podinfo
+              mountPath: /etc/podinfo
+              readOnly: true
+            - name: configmap
+              mountPath: /etc/infrahq
+              readOnly: true
+            - name: certificate-authority
+              mountPath: /var/run/secrets/infrahq.com/certificate-authority
+              readOnly: true
+            - name: access-key
+              mountPath: /var/run/secrets/infrahq.com/access-key
+              readOnly: true
+{{- if .Values.volumeMounts }}
+{{- .Values.volumeMounts | toYaml | nindent 12 }}
+{{- end }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.config.addr.https }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.config.addr.metrics }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          resources:
+{{- .Values.resources | toYaml | nindent 12 }}
+      volumes:
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: "labels"
+                fieldRef:
+                  fieldPath: metadata.labels
+        - name: configmap
+          configMap:
+            name: {{ include "connector.fullname" . }}
+        - name: certificate-authority
+          secret:
+            secretName: {{ include "connector.fullname" . }}-certificate-authority
+        - name: access-key
+          secret:
+{{- if .Values.accessKey }}
+            secretName: {{ include "connector.fullname" . }}-access-key
+{{- else if .Values.accessKeySecret }}
+            secretName: {{ .Values.accessKeySecret }}
+{{- else }}
+{{- fail "One of accessKey or accessKeySecret must be set." }}
+{{- end }}
+{{- if .Values.volumes }}
+{{- .Values.volumes | toYaml | nindent 8 }}
+{{- end }}
+      nodeSelector:
+{{- .Values.nodeSelector | toYaml | nindent 8 }}
+      affinity:
+{{- .Values.affinity | toYaml | nindent 8 }}
+      tolerations:
+{{- .Values.tolerations | toYaml | nindent 8 }}
