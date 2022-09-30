@@ -1,0 +1,7 @@
+config:
+  accessKey: xxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyy
+  server:
+    url: localhost
+
+service:
+  type: ClusterIP

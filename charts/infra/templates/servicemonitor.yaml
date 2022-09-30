@@ -1,0 +1,29 @@
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "connector.fullname" . }}
+  labels:
+{{- include "connector.labels" . | nindent 4 }}
+{{- if .Values.metrics.serviceMonitor.labels }}
+{{- .Values.metrics.serviceMonitor.labels | toYaml | nindent 4 }}
+{{- end }}
+  annotations:
+{{- .Values.metrics.serviceMonitor.annotations | toYaml | nindent 4 }}
+spec:
+  jobLabel: app.kubernetes.io/name
+  endpoints:
+    - path: /metrics
+      port: {{ .Values.metrics.service.portName }}
+      interval: {{ .Values.metrics.serviceMonitor.interval }}
+      relabelings:
+{{- .Values.metrics.serviceMonitor.relabelings | toYaml | nindent 8 }}
+      metricRelabelings:
+{{- .Values.metrics.serviceMonitor.metricRelabelings | toYaml | nindent 8 }}
+  selector:
+    matchLabels:
+{{- include "connector.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}
