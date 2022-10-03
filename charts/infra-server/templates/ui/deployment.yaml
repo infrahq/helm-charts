@@ -1,0 +1,66 @@
+{{- if .Values.ui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ui.fullname" . }}
+  labels:
+{{- include "ui.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.ui.replicas }}
+  selector:
+    matchLabels:
+{{- include "ui.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+{{- include "ui.podLabels" . | nindent 8 }}
+      annotations:
+{{- include "ui.podAnnotations" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: {{ .Values.ui.serviceAccount.automountServiceAccountToken }}
+      serviceAccountName: {{ include "ui.serviceAccountName" . }}
+      imagePullSecrets:
+{{- .Values.ui.imagePullSecrets | toYaml | nindent 8 }}
+      securityContext:
+{{- .Values.ui.podSecurityContext | toYaml | nindent 8 }}
+      containers:
+        - name: ui
+          securityContext:
+{{- .Values.ui.securityContext | toYaml | nindent 12 }}
+          image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
+          env:
+{{- .Values.ui.env | toYaml | nindent 12 }}
+          envFrom:
+{{- .Values.ui.envFrom | toYaml | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            successThreshold: {{ .Values.ui.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.ui.livenessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.ui.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.ui.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.ui.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            successThreshold: {{ .Values.ui.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.ui.readinessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.ui.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.ui.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.ui.readinessProbe.timeoutSeconds }}
+          resources:
+{{- .Values.ui.resources | toYaml | nindent 12 }}
+      nodeSelector:
+{{- .Values.ui.nodeSelector | toYaml | nindent 8 }}
+      affinity:
+{{- .Values.ui.affinity | toYaml | nindent 8 }}
+      tolerations:
+{{- .Values.ui.tolerations | toYaml | nindent 8 }}
+{{- end }}
