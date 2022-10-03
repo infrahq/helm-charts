@@ -1,0 +1,89 @@
+{{- if and .Values.postgres.enabled (not .Values.config.dbHost) }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "postgres.fullname" . }}
+  labels:
+{{- include "postgres.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "postgres.fullname" . }}
+  replicas: {{ .Values.postgres.replicas }}
+  selector:
+    matchLabels:
+{{- include "postgres.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+{{- include "postgres.podLabels" . | nindent 8 }}
+      annotations:
+{{- include "postgres.podAnnotations" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: {{ .Values.postgres.serviceAccount.automountServiceAccountToken }}
+      serviceAccountName: {{ include "postgres.serviceAccountName" . }}
+      imagePullSecrets:
+{{- .Values.postgres.imagePullSecrets | toYaml | nindent 8 }}
+      securityContext:
+{{- .Values.postgres.podSecurityContext | toYaml | nindent 8 }}
+      containers:
+        - name: postgres
+          securityContext:
+{{- .Values.postgres.securityContext | toYaml | nindent 12 }}
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag | default "alpine" }}"
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          env:
+{{- if .Values.postgres.env }}
+{{- .Values.postgres.env | toYaml | nindent 12 }}
+{{- end }}
+            - name: POSTGRES_DB
+              value: {{ .Values.config.dbName }}
+            - name: POSTGRES_USER
+              value: {{ .Values.config.dbUsername }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres.fullname" . }}
+                  key: password
+          envFrom:
+{{- .Values.postgres.envFrom | toYaml | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+{{- if .Values.postgres.volumeMounts }}
+{{- .Values.postgres.volumeMounts | toYaml | nindent 12 }}
+{{- end }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command: [pg_isready, -d, {{ .Values.config.dbName }}, -U, {{ .Values.config.dbUsername }}]
+            successThreshold: {{ .Values.postgres.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.postgres.livenessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.postgres.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.postgres.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.postgres.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            exec:
+              command: [pg_isready, -d, {{ .Values.config.dbName }}, -U, {{ .Values.config.dbUsername }}]
+            successThreshold: {{ .Values.postgres.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.postgres.readinessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.postgres.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.postgres.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.postgres.readinessProbe.timeoutSeconds }}
+          resources:
+{{- .Values.postgres.resources | toYaml | nindent 12 }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "postgres.fullname" . }}
+{{- if .Values.postgres.volumes }}
+{{- .Values.postgres.volumes | toYaml | nindent 8 }}
+{{- end }}
+      nodeSelector:
+{{- .Values.postgres.nodeSelector | toYaml | nindent 8 }}
+      affinity:
+{{- .Values.postgres.affinity | toYaml | nindent 8 }}
+      tolerations:
+{{- .Values.postgres.tolerations | toYaml | nindent 8 }}
+{{- end }}

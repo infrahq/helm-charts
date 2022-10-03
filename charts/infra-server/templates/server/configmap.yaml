@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "server.fullname" . }}
+  labels:
+{{- include "server.labels" . | nindent 4 }}
+data:
+  infra.yaml: |
+    version: 0.2
+{{- $config := deepCopy .Values.config }}
+
+{{- range $key, $val := $config.addr }}
+{{- $_ := set $config.addr $key (printf ":%.f" $val) }}
+{{- end }}
+
+{{- if .Values.ui.enabled }}
+{{- $_ := merge $config.ui (dict "proxyURL" (printf "http://%s.%s:%.f" (include "ui.fullname" .) .Release.Namespace .Values.ui.service.port)) }}
+{{- end }}
+
+{{- if and .Values.postgres.enabled (not .Values.config.dbHost) }}
+{{- $_ := set $config "dbHost" (include "postgres.fullname" .) }}
+{{- $_ := set $config "dbPort" .Values.postgres.service.port }}
+{{- end }}
+
+{{- if not $config.dbEncryptionKey }}
+{{- $_ := set $config "dbEncryptionKey" "/var/run/secrets/infrahq.com/encryption-key/key" }}
+{{- end }}
+
+{{- if not .Values.config.tls }}
+{{- $_ := set $config.tls "ca" "/var/run/secrets/infrahq.com/certificate-authority/ca.crt" }}
+{{- $_ := set $config.tls "caPrivateKey" "file:/var/run/secrets/infrahq.com/certificate-authority/ca.key" }}
+{{- end }}
+
+{{- range $key, $val := $config }}
+{{- if kindIs "invalid" $val }}
+{{- else if kindIs "map" $val }}
+    {{ $key }}:
+{{- $val | toYaml | nindent 6 }}
+{{- else if kindIs "slice" $val }}
+    {{ $key }}:
+{{- $val | toYaml | nindent 6 }}
+{{- else if kindIs "string" $val }}
+    {{ $key }}: {{ tpl $val $ }}
+{{- else }}
+    {{ $key }}: {{ $val }}
+{{- end }}
+{{- end }}
