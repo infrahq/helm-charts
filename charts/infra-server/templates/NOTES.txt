@@ -1,0 +1,11 @@
+{{- if and .Values.server.ingress.enabled .Values.server.ingress.hosts }}
+Access Infra server by visiting https://{{ .Values.server.ingress.hosts | first }} in a browser.
+{{- else }}
+Access Infra server by running the following command in a shell:
+
+  kubectl -n {{ .Release.Namespace }} port-forward service/{{ include "server.fullname" . }} 8443:{{ .Values.server.service.securePort }}
+
+Afterwards, open https://localhost:8443 in a browser.
+{{- end }}
+
+Visit https://infrahq.com for more information on Infra server.
