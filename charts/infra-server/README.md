@@ -1,10 +1,10 @@
 # Infra Server Chart
 
-A Helm chart for Infra server. This chart deploys only the server. To deploy Infra connector, use the [connectro](https://github.com/infrahq/helm-charts/charts/connector) chart.
+A Helm chart for Infra server. This chart deploys only the server. To deploy Infra connector, use the [infra](https://github.com/infrahq/helm-charts/charts/infra) chart.
 
 Source code for this chart and application can be found on GitHub:
 
-- https://github.com/infrahq/helm-charts/charts/server
+- https://github.com/infrahq/helm-charts/charts/infra-server
 - https://github.com/infrahq/infra
 
 ## Prerequisites
