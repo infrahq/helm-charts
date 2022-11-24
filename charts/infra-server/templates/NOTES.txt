@@ -8,4 +8,17 @@ Access Infra server by running the following command in a shell:
 Afterwards, open https://localhost:8443 in a browser.
 {{- end }}
 
+{{- if .Values.config.initialUser }}
+
+In the dashboard, login with user "admin@local". The password can be found
+by running the following command in a shell:
+
+  kubectl -n {{ .Release.Namespace }} get secret {{ include "server.fullname" . | printf "%s-initial-admin-secret" }} -o jsonpath='{.data.password}' | base64 -d
+
+Once logged in, you should replace the initial admin user with your own
+user or connect an identity provider.
+
+The initial admin user can be disabled with `config.admin.enabled=false`.
+{{- end }}
+
 Visit https://infrahq.com for more information on Infra server.

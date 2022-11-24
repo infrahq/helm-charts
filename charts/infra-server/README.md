@@ -42,98 +42,6 @@ This chart can be customized by configuring Helm values. See [Customizing the Ch
 
 For a complete list of customization options, see `helm show values infrahq/infra-server`.
 
-### Users
-
-Add users to Infra. Each user should set a `name`, which should be a valid email address, and may set a password or access key. Passwords and access keys may be set in plaintext or set to a reference to a file or environment variable.
-
-Access keys must be in the form of XXXXXXXXXX.YYYYYYYYYYYYYYYYYYYYYYYY (10-length ASCII key followed by 24-length ASCII secret separated by a period).
-
-```yaml
-# example values.yaml
----
-config:
-  users:
-    # Add user without password or access key
-    - name: admin@example.com
-
-    # Add user with a plaintext password
-    - name: admin@example.com
-      password: SetThisPassword!
-
-    # Add user with a plaintext access key
-    - name: admin@example.com
-      accessKey: 123bogusab.abcdefnotreal123key456AB
-
-    # Add a user setting the password using a file. The password should be the only contents of the file. The
-    # file will need to be mounted into the pod using `volumes` and `volumeMounts`.
-    - name: admin@example.com
-      password: file:/var/run/secrets/admin@example.com
-
-    # Add a user setting the access key using a file. The access key should be the only contents of the file. The
-    # file will need to be mounted into the pod using `volumes` and `volumeMounts`.
-    - name: admin@example.com
-      accessKey: file:/var/run/secrets/admin@example.com
-
-    # Add a user setting the password with an environment variable. The environment variable will need to be
-    # injected into the pod using `env` or `envFrom`.
-    - name: admin@example.com
-      password: env:ADMIN_PASSWORD
-
-    # Add a user setting the access key with an environment variable. The environment variable will need to be
-    # injected into the pod using `env` or `envFrom`.
-    - name: admin@example.com
-      accessKey: env:ACCESS_KEY
-```
-
-### Grants
-
-Add a grant for a user or group to a resource. A resource is either `infra`, for setting roles within Infra, or the name of a Kubernetes cluster.
-
-Infra roles can be either `admin`, for full access, or `view`, for limited readonly access.
-
-Kubernetes roles can be any Kubernetes ClusterRole known to Infra. See [Working with Roles](https://infrahq.com/docs/manage/roles) for more details.
-
-```yaml
-# example values.yaml
----
-config:
-  grants:
-    # Add user as an Infra admin
-    - user: admin@example.com
-      role: admin
-      resource: infra
-
-    # Add user as a Kubernetes admin
-    - user: admin@example.com
-      role: admin
-      resource: example-cluster
-
-    # Add user as a Kubernetes edit in the web namespace
-    - user: user@example.com
-      role: edit
-      resource: example-cluster.web
-
-    # Add group as a Kubernetes view
-    - group: Everyone
-      role: view
-      resource: example-cluster
-```
-
-### Identity provider
-
-Add an identity provider (IdP). Supported IdPs include [Okta](https://infrahq.com/docs/manage/idp/okta), [Google](https://infrahq.com/docs/manage/idp/google), [Azure AD](https://infrahq.com/docs/manage/idp/azure-ad), and any generic [OIDC](https://infrahq.com/docs/manage/idp/oidc) provider.
-
-```yaml
-# example values.yaml
----
-config:
-  providers:
-    - name: Okta
-      url: example.okta.com
-      clientID: exampleClientID
-      clientSecret: examplePlaintextSecret
-```
-
 ### External database
 
 Configure an external PostgreSQL database instead of using the one deployed with the chart. Setting these options will omit the included database from being deployed.
@@ -166,9 +74,11 @@ Values for the `infra` chart are incompatible with values for this chart and mus
 * `connector` has been removed. Use the `infrahq/infra` chart instead
 * `global.image` has been removed. Use `server.image`, `ui.image`, or `postgres.image` instead
 * `server.config` has been renamed to `config`, e.g. `server.config.dbHost` is not `config.dbHost`
-* `server.additionalUsers`, `server.additionalProviders`, `server.additionalGrants` has been removed
+* `server.additionalUsers`, `server.additionalProviders`, `server.additionalGrants`, `server.additionalSecrets` has been removed
 * `server.persistence` has been removed
 * Default `server.service.type` value has been changed to `ClusterIP` instead of `LoadBalancer`
+* `server.users`, `server.providers`, `server.grants`, `server.secrets` has been removed. Users are encouraged to move configurations over to [Terraform Infra provider](https://registry.terraform.io/providers/infrahq/infra). **Any users, grants, or identity provider created by server configurations _will be removed_**
+    * An initial admin user can be enabled (default) with `config.admin.enabled`. This creates a user `admin@local` with a randomly generated password which can be used to bootstrap a deployment. Setting `config.admin.enabled=false` disables this user.
 
 _Note: The label value for `app.kubernetes.io/name` has changed. Since this label is used as a selector, the field is immutable. In order to perform an in-place upgrade, the value must be set to match the previous value. This can be done by setting `nameOverride=infra`._
 
