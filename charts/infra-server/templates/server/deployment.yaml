@@ -63,6 +63,11 @@ spec:
               mountPath: /var/run/secrets/infrahq.com/encryption-key
               readOnly: true
 {{- end }}
+{{- if .Values.config.admin.enabled }}
+            - name: initial-admin-secret
+              mountPath: /var/run/secrets/infrahq.com/initial-admin-secret
+              readOnly: true
+{{- end }}
 {{- if .Values.server.volumeMounts }}
 {{- .Values.server.volumeMounts | toYaml | nindent 12 }}
 {{- end }}
@@ -126,6 +131,11 @@ spec:
         - name: encryption-key
           secret:
             secretName: {{ include "server.fullname" . }}-encryption-key
+{{- end }}
+{{- if .Values.config.admin.enabled }}
+        - name: initial-admin-secret
+          secret:
+            secretName: {{ include "server.fullname" . }}-initial-admin-secret
 {{- end }}
 {{- if .Values.server.volumes }}
 {{- .Values.server.volumes | toYaml | nindent 8 }}
