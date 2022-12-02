@@ -1,0 +1,25 @@
+apiVersion: v1
+entries:
+  infra:
+  - apiVersion: v2
+    appVersion: 0.19.0
+    created: "2022-12-02T20:02:39.571220027Z"
+    description: A Helm chart for Infra connector. For Infra server charts, use infra-server.
+    digest: ad8560557ea05cc946983046f6da90b3cefe8eb883c8ff6f82a7dcbf102a82e4
+    name: infra
+    type: application
+    urls:
+    - https://github.com/infrahq/helm-charts/releases/download/infra-0.1.0/infra-0.1.0.tgz
+    version: 0.1.0
+  infra-server:
+  - apiVersion: v2
+    appVersion: 0.19.0
+    created: "2022-12-02T20:02:39.757872426Z"
+    description: A Helm chart for Infra server.
+    digest: df1229f3f034a48c90be5c61b2b15fdb4ca272aede9966ac68d40ae804abf867
+    name: infra-server
+    type: application
+    urls:
+    - https://github.com/infrahq/helm-charts/releases/download/infra-server-0.1.0/infra-server-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-12-02T20:02:39.757882226Z"
