@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
       - uses: helm/chart-testing-action@v2.3.1
       - id: list-changed
         run: |
@@ -33,7 +33,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
       - uses: helm/chart-testing-action@v2.3.1
       - run: ct lint --charts ${{ matrix.chart.path }} --validate-maintainers=false
 
@@ -48,7 +48,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
       - uses: helm/chart-testing-action@v2.3.1
       - uses: helm/kind-action@v1.4.0
         with:
