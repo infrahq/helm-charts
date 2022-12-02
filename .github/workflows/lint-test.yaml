@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
       - uses: actions/setup-python@v2
-      - uses: helm/chart-testing-action@v2.2.1
+      - uses: helm/chart-testing-action@v2.3.1
       - id: list-changed
         run: |
           echo "charts=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} | jq -cnR '[inputs | {name: split("/")[-1], path: .}]')" >>$GITHUB_OUTPUT
@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
       - uses: actions/setup-python@v2
-      - uses: helm/chart-testing-action@v2.2.1
+      - uses: helm/chart-testing-action@v2.3.1
       - run: ct lint --charts ${{ matrix.chart.path }} --validate-maintainers=false
 
   test:
@@ -49,7 +49,7 @@ jobs:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
       - uses: actions/setup-python@v2
-      - uses: helm/chart-testing-action@v2.2.1
+      - uses: helm/chart-testing-action@v2.3.1
       - uses: helm/kind-action@v1.4.0
         with:
           cluster_name: chart-testing-${{ matrix.chart.name }}
