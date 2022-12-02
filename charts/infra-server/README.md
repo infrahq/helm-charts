@@ -65,11 +65,11 @@ server:
           key: mypassword
 ```
 
-## Migrate from `infra` chart
+## Migrate from [infrahq/infra][1] chart
 
-_Note: Ensure to back up the database and database encryption key before migrating from the `infra` chart._
+_Note: Ensure to back up the database and database encryption key before migrating from the [infrahq/infra][1] chart._
 
-Values for the `infra` chart are incompatible with values for this chart and must be updated before migrating.
+Values for the [infrahq/infra][1] chart are incompatible with values for this chart and must be updated before migrating.
 
 * `connector` has been removed. Use the `infrahq/infra` chart instead
 * `global.image` has been removed. Use `server.image`, `ui.image`, or `postgres.image` instead
@@ -85,3 +85,5 @@ _Note: The label value for `app.kubernetes.io/name` has changed. Since this labe
 ```bash
 helm upgrade --atomic infra infrahq/infra-server -f values.yaml --set nameOverride=infra
 ```
+
+[1]: https://github.com/infrahq/infra/tree/main/helm
