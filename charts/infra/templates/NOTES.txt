@@ -1,0 +1,4 @@
+Infra connector is starting up in your cluster. It may take a couple minutes to
+complete registration.
+
+Visit https://{{ .Values.config.server.url | replace "api.infrahq.com" "login.infrahq.com" }} to check the status.

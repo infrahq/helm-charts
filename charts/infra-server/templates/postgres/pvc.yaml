@@ -1,0 +1,21 @@
+{{- if and .Values.postgres.enabled (not .Values.config.dbHost) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "postgres.fullname" . }}
+  labels:
+{{- include "postgres.labels" . | nindent 4 }}
+{{- if .Values.postgres.persistence.labels }}
+{{- .Values.postgres.persistence.labels | toYaml | nindent 4 }}
+{{- end }}
+  annotations:
+{{- .Values.postgres.persistence.annotations | toYaml | nindent 4 }}
+spec:
+{{- if .Values.postgres.persistence.className }}
+  storageClassName: {{ .Values.postgres.persistence.className | quote }}
+{{- end }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+{{- .Values.postgres.persistence.resources | toYaml | nindent 6 }}
+{{- end }}

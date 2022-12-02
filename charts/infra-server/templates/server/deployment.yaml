@@ -1,0 +1,148 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "server.fullname" . }}
+  labels:
+{{- include "server.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.server.autoscaling.enabled }}
+  replicas: {{ .Values.server.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+{{- include "server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+{{- include "server.podLabels" . | nindent 8 }}
+      annotations:
+{{- include "server.podAnnotations" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: {{ .Values.server.serviceAccount.automountServiceAccountToken }}
+      serviceAccountName: {{ include "server.serviceAccountName" . }}
+      imagePullSecrets:
+{{- .Values.server.imagePullSecrets | toYaml | nindent 8 }}
+      securityContext:
+{{- .Values.server.podSecurityContext | toYaml | nindent 8 }}
+      containers:
+        - name: server
+          securityContext:
+{{- .Values.server.securityContext | toYaml | nindent 12 }}
+          image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+          args:
+            - server
+            - -f
+            - /etc/infrahq/infra.yaml
+            - --log-level
+            - {{ .Values.config.logLevel | default "info" }}
+          env:
+{{- if .Values.server.env }}
+{{- .Values.server.env | toYaml | nindent 12 }}
+{{- end }}
+{{- if and .Values.postgres.enabled (not .Values.config.dbHost) }}
+            - name: INFRA_SERVER_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres.fullname" . }}
+                  key: password
+{{- end }}
+          envFrom:
+{{- .Values.server.envFrom | toYaml | nindent 12 }}
+          volumeMounts:
+            - name: configmap
+              mountPath: /etc/infrahq
+              readOnly: true
+{{- if not .Values.config.tls }}
+            - name: certificate-authority
+              mountPath: /var/run/secrets/infrahq.com/certificate-authority
+              readOnly: true
+{{- end }}
+{{- if not .Values.config.dbEncryptionKey }}
+            - name: encryption-key
+              mountPath: /var/run/secrets/infrahq.com/encryption-key
+              readOnly: true
+{{- end }}
+{{- if .Values.config.admin.enabled }}
+            - name: initial-admin-secret
+              mountPath: /var/run/secrets/infrahq.com/initial-admin-secret
+              readOnly: true
+{{- end }}
+{{- if .Values.server.volumeMounts }}
+{{- .Values.server.volumeMounts | toYaml | nindent 12 }}
+{{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.config.addr.http }}
+              protocol: TCP
+            - name: https
+              containerPort: {{ .Values.config.addr.https }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.config.addr.metrics }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            successThreshold: {{ .Values.server.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.server.livenessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.server.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.server.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            successThreshold: {{ .Values.server.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.server.readinessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.server.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.server.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.server.readinessProbe.timeoutSeconds }}
+          resources:
+{{- .Values.server.resources | toYaml | nindent 12 }}
+{{- if and .Values.postgres.enabled (not .Values.config.dbHost) }}
+      initContainers:
+        - name: postgres-ready
+          image: postgres:14-alpine
+          command: [sh, -c]
+          args:
+            - while ! pg_isready; do sleep 0.2; done
+          env:
+            - name: PGHOST
+              value: {{ include "postgres.fullname" . }}
+            - name: PGPORT
+              value: {{ .Values.postgres.service.port | quote }}
+            - name: PGDATABASE
+              value: infra
+            - name: PGUSER
+              value: infra
+{{- end }}
+      volumes:
+        - name: configmap
+          configMap:
+            name: {{ include "server.fullname" . }}
+{{- if not .Values.config.tls }}
+        - name: certificate-authority
+          secret:
+            secretName: {{ include "server.fullname" . }}-certificate-authority
+{{- end }}
+{{- if not .Values.config.dbEncryptionKey }}
+        - name: encryption-key
+          secret:
+            secretName: {{ include "server.fullname" . }}-encryption-key
+{{- end }}
+{{- if .Values.config.admin.enabled }}
+        - name: initial-admin-secret
+          secret:
+            secretName: {{ include "server.fullname" . }}-initial-admin-secret
+{{- end }}
+{{- if .Values.server.volumes }}
+{{- .Values.server.volumes | toYaml | nindent 8 }}
+{{- end }}
+      nodeSelector:
+{{- .Values.server.nodeSelector | toYaml | nindent 8 }}
+      affinity:
+{{- .Values.server.affinity | toYaml | nindent 8 }}
+      tolerations:
+{{- .Values.server.tolerations | toYaml | nindent 8 }}
