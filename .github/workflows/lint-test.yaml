@@ -25,6 +25,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     needs: [prepare]
+    if: ${{ needs.prepare.outputs.charts != '[]' && needs.prepare.outputs.charts != '' }}
     strategy:
       matrix:
         chart: ${{ fromJson(needs.prepare.outputs.charts) }}
@@ -40,6 +41,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: [prepare]
+    if: ${{ needs.prepare.outputs.charts != '[]' && needs.prepare.outputs.charts != '' }}
     strategy:
       matrix:
         chart: ${{ fromJson(needs.prepare.outputs.charts) }}
