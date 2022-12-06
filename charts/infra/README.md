@@ -44,9 +44,9 @@ This chart can be customized by configuring Helm values. See [Customizing the Ch
 
 For a complete list of customization options, see `helm show values infrahq/infra`.
 
-## Migrate from `infra` chart
+## Migrate from [infrahq/infra][1] chart
 
-Values for the `infra` chart are incompatible with values for this chart and must be updated before migrating.
+Values for the [infrahq/infra][1] chart are incompatible with values for this chart and must be updated before migrating.
 
 * `connector` has been removed and child keys have been moved up one level, e.g. `connector.service` is now `service`, `connector.config` is now `config`, etc.
 * `connector.config.accessKey` has been renamed to `config.accessKey`
@@ -86,3 +86,5 @@ _Note: The label value for `app.kubernetes.io/name` has changed. Since this labe
 ```bash
 helm upgrade --atomic infra-connector infrahq/infra -f values.yaml --set nameOverride=infra-connector
 ```
+
+[1]: https://github.com/infrahq/infra/tree/main/helm

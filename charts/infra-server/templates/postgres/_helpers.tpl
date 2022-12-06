@@ -51,7 +51,7 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if or .Values.postgres.labels .Values.global.labels }}
-{{- merge .Values.postgres.labels .Values.global.labels | toYaml }}
+{{ merge .Values.postgres.labels .Values.global.labels | toYaml }}
 {{- end }}
 {{- end }}
 
@@ -69,7 +69,7 @@ Pod labels
 {{- define "postgres.podLabels" -}}
 {{- include "postgres.selectorLabels" . }}
 {{- if or .Values.postgres.podLabels .Values.global.podLabels }}
-{{- merge .Values.postgres.podLabels .Values.global.podLabels | toYaml }}
+{{ merge .Values.postgres.podLabels .Values.global.podLabels | toYaml }}
 {{- end }}
 {{- end }}
 
@@ -78,7 +78,7 @@ Pod annotations
 */}}
 {{- define "postgres.podAnnotations" -}}
 {{- if or .Values.postgres.podAnnotations .Values.global.podAnnotations }}
-{{- merge .Values.postgres.podAnnotations .Values.global.podAnnotations | toYaml }}
+{{ merge .Values.postgres.podAnnotations .Values.global.podAnnotations | toYaml }}
 {{- end }}
 {{- end }}
 
