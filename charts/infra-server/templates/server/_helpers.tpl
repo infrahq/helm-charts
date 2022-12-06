@@ -51,7 +51,7 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if or .Values.server.labels .Values.global.labels }}
-{{- merge .Values.server.labels .Values.global.labels | toYaml }}
+{{ merge .Values.server.labels .Values.global.labels | toYaml }}
 {{- end }}
 {{- end }}
 
@@ -69,7 +69,7 @@ Pod labels
 {{- define "server.podLabels" -}}
 {{- include "server.selectorLabels" . }}
 {{- if or .Values.server.podLabels .Values.global.podLabels }}
-{{- merge .Values.server.podLabels .Values.global.podLabels | toYaml }}
+{{ merge .Values.server.podLabels .Values.global.podLabels | toYaml }}
 {{- end }}
 {{- end }}
 
@@ -79,7 +79,7 @@ Pod annotations
 {{- define "server.podAnnotations" -}}
 rollme: {{ include (print .Template.BasePath "/server/configmap.yaml") . | sha1sum }}
 {{- if or .Values.server.podAnnotations .Values.global.podAnnotations }}
-{{- merge .Values.server.podAnnotations .Values.global.podAnnotations | toYaml }}
+{{ merge .Values.server.podAnnotations .Values.global.podAnnotations | toYaml }}
 {{- end }}
 {{- end }}
 
