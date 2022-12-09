@@ -3,5 +3,14 @@ config:
   server:
     url: localhost
 
+labels:
+  label: value
+
+podLabels:
+  pod-label: value
+
+podAnnotations:
+  pod-annotation: value
+
 service:
   type: ClusterIP
