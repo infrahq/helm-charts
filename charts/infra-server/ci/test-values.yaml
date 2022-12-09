@@ -1,0 +1,39 @@
+global:
+  labels:
+    global-label: value
+
+  podLabels:
+    global-pod-label: value
+
+  podAnnotations:
+    global-pod-annotation: value
+
+server:
+  labels:
+    server-label: value
+
+  podLabels:
+    server-pod-label: value
+
+  podAnnotations:
+    server-pod-annotation: value
+
+ui:
+  labels:
+    ui-label: value
+
+  podLabels:
+    ui-pod-label: value
+
+  podAnnotations:
+    ui-pod-annotation: value
+
+postgres:
+  labels:
+    postgres-label: value
+
+  podLabels:
+    postgres-pod-label: value
+
+  podAnnotations:
+    postgres-pod-annotation: value

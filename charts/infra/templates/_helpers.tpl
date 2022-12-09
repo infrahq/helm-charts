@@ -42,6 +42,9 @@ app.infrahq.com/component: connector
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- if .Values.labels }}
+{{ toYaml .Values.labels }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -69,7 +72,7 @@ Pod labels
 {{- define "connector.podLabels" -}}
 {{- include "connector.selectorLabels" . }}
 {{- if .Values.podLabels }}
-{{- toYaml .Values.podLabels }}
+{{ toYaml .Values.podLabels }}
 {{- end }}
 {{- end }}
 
@@ -79,6 +82,6 @@ Pod annotations
 {{- define "connector.podAnnotations" -}}
 rollme: {{ include (print .Template.BasePath "/configmap.yaml") . | sha1sum }}
 {{- if .Values.podAnnotations }}
-{{- toYaml .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations }}
 {{- end }}
 {{- end }}
