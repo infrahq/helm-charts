@@ -28,7 +28,7 @@ data:
 
 {{- if not .Values.config.tls }}
 {{- $_ := set $config.tls "ca" "/var/run/secrets/infrahq.com/certificate-authority/ca.crt" }}
-{{- $_ := set $config.tls "caPrivateKey" "file:/var/run/secrets/infrahq.com/certificate-authority/ca.key" }}
+{{- $_ := set $config.tls "caPrivateKey" "/var/run/secrets/infrahq.com/certificate-authority/ca.key" }}
 {{- end }}
 
 {{- $config := unset $config "users" }}
