@@ -37,7 +37,13 @@ data:
 {{- $config := unset $config "secrets" }}
 
 {{- if .Values.config.admin.enabled }}
-{{- $_ := set $config "users" (list (dict "name" "admin@local" "password" "file:/var/run/secrets/infrahq.com/initial-admin-secret/password" "infraRole" "admin")) }}
+{{- $adminUser := dict "name" "admin@local" }}
+{{- $_ := set $adminUser "infraRole" "admin" }}
+{{- $_ := set $adminUser "password" "file:/var/run/secrets/infrahq.com/initial-admin-password-secret/password" }}
+{{- if .Values.config.admin.accessKeySecret }}
+{{- $_ := set $adminUser "accessKey" "file:/var/run/secrets/infrahq.com/initial-admin-access-key-secret/access-key" }}
+{{- end }}
+{{- $_ := set $config "users" (list $adminUser) }}
 {{- end }}
 
 {{- range $key, $val := $config }}
