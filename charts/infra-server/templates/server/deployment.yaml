@@ -64,9 +64,14 @@ spec:
               readOnly: true
 {{- end }}
 {{- if .Values.config.admin.enabled }}
-            - name: initial-admin-secret
-              mountPath: /var/run/secrets/infrahq.com/initial-admin-secret
+            - name: initial-admin-password-secret
+              mountPath: /var/run/secrets/infrahq.com/initial-admin-password-secret
               readOnly: true
+{{- if .Values.config.admin.accessKeySecret }}
+            - name: initial-admin-access-key-secret
+              mountPath: /var/run/secrets/infrahq.com/initial-admin-access-key-secret
+              readOnly: true
+{{- end }}
 {{- end }}
 {{- if .Values.server.volumeMounts }}
 {{- .Values.server.volumeMounts | toYaml | nindent 12 }}
@@ -133,9 +138,14 @@ spec:
             secretName: {{ include "server.fullname" . }}-encryption-key
 {{- end }}
 {{- if .Values.config.admin.enabled }}
-        - name: initial-admin-secret
+        - name: initial-admin-password-secret
           secret:
             secretName: {{ include "server.fullname" . }}-initial-admin-secret
+{{- if .Values.config.admin.accessKeySecret }}
+        - name: initial-admin-access-key-secret
+          secret:
+            secretName: {{ .Values.config.admin.accessKeySecret }}
+{{- end }}
 {{- end }}
 {{- if .Values.server.volumes }}
 {{- .Values.server.volumes | toYaml | nindent 8 }}

@@ -28,7 +28,7 @@ data:
 
 {{- if not .Values.config.tls }}
 {{- $_ := set $config.tls "ca" "/var/run/secrets/infrahq.com/certificate-authority/ca.crt" }}
-{{- $_ := set $config.tls "caPrivateKey" "file:/var/run/secrets/infrahq.com/certificate-authority/ca.key" }}
+{{- $_ := set $config.tls "caPrivateKey" "/var/run/secrets/infrahq.com/certificate-authority/ca.key" }}
 {{- end }}
 
 {{- $config := unset $config "users" }}
@@ -37,8 +37,13 @@ data:
 {{- $config := unset $config "secrets" }}
 
 {{- if .Values.config.admin.enabled }}
-{{- $_ := set $config "users" (list (dict "name" "admin@local" "password" "file:/var/run/secrets/infrahq.com/initial-admin-secret/password")) }}
-{{- $_ := set $config "grants" (list (dict "user" "admin@local" "role" "admin" "resource" "infra")) }}
+{{- $adminUser := dict "name" "admin@local" }}
+{{- $_ := set $adminUser "infraRole" "admin" }}
+{{- $_ := set $adminUser "password" "file:/var/run/secrets/infrahq.com/initial-admin-password-secret/password" }}
+{{- if .Values.config.admin.accessKeySecret }}
+{{- $_ := set $adminUser "accessKey" "file:/var/run/secrets/infrahq.com/initial-admin-access-key-secret/access-key" }}
+{{- end }}
+{{- $_ := set $config "users" (list $adminUser) }}
 {{- end }}
 
 {{- range $key, $val := $config }}
