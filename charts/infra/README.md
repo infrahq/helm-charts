@@ -4,7 +4,7 @@ A Helm chart for Infra connector. This chart deploys only the connector. To depl
 
 Source code for this chart and application can be found on GitHub:
 
-- https://github.com/infrahq/helm-charts/charts/infra
+- https://github.com/infrahq/helm-charts/tree/main/charts/infra
 - https://github.com/infrahq/infra
 
 ## Prerequisites
@@ -48,10 +48,10 @@ For a complete list of customization options, see `helm show values infrahq/infr
 
 Values for the [infrahq/infra][1] chart are incompatible with values for this chart and must be updated before migrating.
 
-* `connector` has been removed and child keys have been moved up one level, e.g. `connector.service` is now `service`, `connector.config` is now `config`, etc.
-* `connector.config.accessKey` has been renamed to `config.accessKey`
-* `config.accessKeySecret` has been added to simplify loading access keys from an existing Kubernetes secret
-* `connector.config.server` has been renamed to `config.server.url` with a default value of `api.infrahq.com`
+- `connector` has been removed and child keys have been moved up one level, e.g. `connector.service` is now `service`, `connector.config` is now `config`, etc.
+- `connector.config.accessKey` has been renamed to `config.accessKey`
+- `config.accessKeySecret` has been added to simplify loading access keys from an existing Kubernetes secret
+- `connector.config.server` has been renamed to `config.server.url` with a default value of `api.infrahq.com`
 
 ```yaml
 # before: infra chart values.yaml

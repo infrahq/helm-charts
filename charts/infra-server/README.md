@@ -4,7 +4,7 @@ A Helm chart for Infra server. This chart deploys only the server and its depend
 
 Source code for this chart and application can be found on GitHub:
 
-- https://github.com/infrahq/helm-charts/charts/infra-server
+- https://github.com/infrahq/helm-charts/tree/main/charts/infra-server
 - https://github.com/infrahq/infra
 
 ## Prerequisites
@@ -71,14 +71,14 @@ _Note: Ensure to back up the database and database encryption key before migrati
 
 Values for the [infrahq/infra][1] chart are incompatible with values for this chart and must be updated before migrating.
 
-* `connector` has been removed. Use the `infrahq/infra` chart instead
-* `global.image` has been removed. Use `server.image`, `ui.image`, or `postgres.image` instead
-* `server.config` has been renamed to `config`, e.g. `server.config.dbHost` is not `config.dbHost`
-* `server.additionalUsers`, `server.additionalProviders`, `server.additionalGrants`, `server.additionalSecrets` has been removed
-* `server.persistence` has been removed
-* Default `server.service.type` value has been changed to `ClusterIP` instead of `LoadBalancer`
-* `server.users`, `server.providers`, `server.grants`, `server.secrets` has been removed. Users are encouraged to move configurations over to [Terraform Infra provider](https://registry.terraform.io/providers/infrahq/infra). **Any users, grants, or identity provider created by server configurations _will be removed_**
-    * An initial admin user can be enabled (default) with `config.admin.enabled`. This creates a user `admin@local` with a randomly generated password which can be used to bootstrap a deployment. Setting `config.admin.enabled=false` disables this user.
+- `connector` has been removed. Use the `infrahq/infra` chart instead
+- `global.image` has been removed. Use `server.image`, `ui.image`, or `postgres.image` instead
+- `server.config` has been renamed to `config`, e.g. `server.config.dbHost` is not `config.dbHost`
+- `server.additionalUsers`, `server.additionalProviders`, `server.additionalGrants`, `server.additionalSecrets` has been removed
+- `server.persistence` has been removed
+- Default `server.service.type` value has been changed to `ClusterIP` instead of `LoadBalancer`
+- `server.users`, `server.providers`, `server.grants`, `server.secrets` has been removed. Users are encouraged to move configurations over to [Terraform Infra provider](https://registry.terraform.io/providers/infrahq/infra). **Any users, grants, or identity provider created by server configurations _will be removed_**
+  - An initial admin user can be enabled (default) with `config.admin.enabled`. This creates a user `admin@local` with a randomly generated password which can be used to bootstrap a deployment. Setting `config.admin.enabled=false` disables this user.
 
 _Note: The label value for `app.kubernetes.io/name` has changed. Since this label is used as a selector, the field is immutable. In order to perform an in-place upgrade, the value must be set to match the previous value. This can be done by setting `nameOverride=infra`._
 
