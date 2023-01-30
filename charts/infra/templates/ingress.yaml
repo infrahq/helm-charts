@@ -32,6 +32,6 @@ spec:
               service:
                 name: {{ include "connector.fullname" . }}
                 port:
-                  number: {{ $servicePort }}
+                  number: {{ .Values.service.port }}
     {{- end }}
 {{- end }}
