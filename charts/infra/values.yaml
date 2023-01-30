@@ -165,7 +165,7 @@ volumes: []
   #   secret:
   #     secretName: secret-name
 
-## Additioanl volume mounts to attach to the connector container
+## Additional volume mounts to attach to the connector container
 volumeMounts: []
   # - name: configmap-volume
   #   mountPath: /mnt/configmap
@@ -223,6 +223,23 @@ service:
   ## Control session-based routing of client connections
   ## Supports `ClientIP` or `None`
   sessionAffinity: ""
+
+  ## Optionally route using an existing ingress controller.
+  ## service.type should be "ClusterIP" if ingress.enabled is true
+  ingress:
+    enabled: false
+    ingressClassName: nginx
+    annotations: {}
+      # kubernetes.io/tls-acme: "true"
+
+    hosts:
+      - host: ""
+        path: /
+        pathType: Prefix
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
 
 ## Metrics configurations
 metrics:
