@@ -52,6 +52,10 @@ config:
   ## Enable telemetry collection
   enableTelemetry: true
 
+  ## Log Level of the server
+  ## [error, warn, info, debug] (default info)
+  logLevel: info
+
   ## Duration of a user session
   ## Default 30 days
   sessionDuration: 720h0m0s
