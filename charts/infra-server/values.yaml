@@ -94,8 +94,8 @@ global:
 
   ## Environment variables to pass to all deployed pods
   env: []
-    # - name: "INFRA_LOG_LEVEL"
-    #   value: "info"
+    # - name: "HTTP_PROXY"
+    #   value: "foo"
 
   ## ConfigMap or Secret references containing environment variables to pass to all deploy pods
   ## Ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
@@ -140,8 +140,8 @@ server:
 
   ## Environment variables to pass to the server container
   env: []
-    # - name: "INFRA_LOG_LEVEL"
-    #   value: "info"
+    # - name: "HTTP_PROXY"
+    #   value: "foo"
 
   ## ConfigMap or Secret references containing environment variables to pass to the server container
   ## Ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
@@ -643,8 +643,8 @@ postgres:
 
   ## Environment variables to pass to the postgres container
   env: []
-    # - name: "INFRA_LOG_LEVEL"
-    #   value: "info"
+    # - name: "HTTP_PROXY"
+    #   value: "foo"
 
   ## ConfigMap or Secret references containing environment variables to pass to the postgres container
   ## Ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
