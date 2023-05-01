@@ -34,6 +34,16 @@ entries:
   infra-server:
   - apiVersion: v2
     appVersion: 0.21.0
+    created: "2023-05-01T19:06:27.010139372Z"
+    description: A Helm chart for Infra server.
+    digest: e8d4d1c3aa6ffaf3dcb7d7c09609399e7faa25d54f180bb6b7da615405aaa54a
+    name: infra-server
+    type: application
+    urls:
+    - https://github.com/infrahq/helm-charts/releases/download/infra-server-0.1.3/infra-server-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: 0.21.0
     created: "2023-01-25T19:53:40.479269399Z"
     description: A Helm chart for Infra server.
     digest: e19050359ded1c47533d546b1e4b0edeb9457191b207f8c88ff7e91e06a2bc15
@@ -62,4 +72,4 @@ entries:
     urls:
     - https://github.com/infrahq/helm-charts/releases/download/infra-server-0.1.0/infra-server-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-25T19:53:40.479285399Z"
+generated: "2023-05-01T19:06:27.010166274Z"
