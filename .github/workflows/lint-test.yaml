@@ -52,7 +52,7 @@ jobs:
       - uses: azure/setup-helm@v3
       - uses: actions/setup-python@v4
       - uses: helm/chart-testing-action@v2.3.1
-      - uses: helm/kind-action@v1.6.0
+      - uses: helm/kind-action@v1.7.0
         with:
           cluster_name: chart-testing-${{ matrix.chart.name }}
       - run: ct install --charts ${{ matrix.chart.path }}
