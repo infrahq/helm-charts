@@ -18,6 +18,13 @@ spec:
 {{- end }}
   externalIPs:
 {{- .Values.service.externalIPs | toYaml | nindent 4 }}
+{{- if .Values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
+{{- end }}
+{{- if semverCompare ">=1.21.0-0" .Capabilities.KubeVersion.Version -}}
+{{- if .Values.service.ipFamilies }}
+  ipFamilies: {{ toYaml .Values.service.ipFamilies | nindent 4 }}
+{{- end }}
 {{- if .Values.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
 {{- end }}
