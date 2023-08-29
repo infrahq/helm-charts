@@ -6,6 +6,7 @@ fullnameOverride: ""
 
 ## Additional connector configurations
 config:
+
   ## Connector container service ports
   addr:
     http: 8080
@@ -27,6 +28,7 @@ config:
 
   ## Server connection configurations
   server:
+
     ## Server URL
     url: "api.infrahq.com"
 
@@ -51,6 +53,7 @@ defaultRoles:
 
 ## Image configurations
 image:
+
   ## The image repository to use for the connector deployment
   repository: infrahq/infra
 
@@ -63,8 +66,7 @@ image:
 
 ## One or more Secret to use when pulling the connector image
 ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets:
-  []
+imagePullSecrets: []
   # - name: "image-pull-secret"
 
 ## Additional labels to apply to all resources
@@ -72,15 +74,13 @@ imagePullSecrets:
 labels: {}
 
 ## Environment variables to pass to the connector container
-env:
-  []
+env: []
   # - name: "INFRA_LOG_LEVEL"
   #   value: "info"
 
 ## ConfigMap or Secret references containing environment variables to pass to the connector container
 ## Ref: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
-envFrom:
-  []
+envFrom: []
   # - configMapRef:
   #     name: configmap-name
   # - secretRef:
@@ -88,6 +88,7 @@ envFrom:
 
 ## Service account configurations
 serviceAccount:
+
   ## Create the service account
   create: true
 
@@ -120,6 +121,7 @@ securityContext:
 ## Liveness probe for the default backend
 ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
 livenessProbe:
+
   ## Minimum number of consecutive successes before the probe is considered successful
   successThreshold: 1
 
@@ -138,6 +140,7 @@ livenessProbe:
 ## Readiness probe for the default backend
 ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
 readinessProbe:
+
   ## Minimum number of consecutive successes before the probe is considered successful
   successThreshold: 1
 
@@ -154,8 +157,7 @@ readinessProbe:
   timeoutSeconds: 1
 
 ## Additional volumes to attach to the connector pod
-volumes:
-  []
+volumes: []
   # - name: configmap-volume
   #   configMap:
   #     name: configmap-name
@@ -164,8 +166,7 @@ volumes:
   #     secretName: secret-name
 
 ## Additioanl volume mounts to attach to the connector container
-volumeMounts:
-  []
+volumeMounts: []
   # - name: configmap-volume
   #   mountPath: /mnt/configmap
   # - name: secret-volume
@@ -174,6 +175,7 @@ volumeMounts:
 
 ## Service configurations
 service:
+
   ## Service type
   ## Ref: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: LoadBalancer
@@ -235,6 +237,7 @@ service:
 
 ## Metrics configurations
 metrics:
+
   ## Enable connector metrics
   enabled: false
 
@@ -254,6 +257,7 @@ metrics:
 
   ## Service monitor configurations
   serviceMonitor:
+
     ## Enable service monitor
     enabled: false
 
@@ -273,8 +277,7 @@ metrics:
     metricRelabelings: []
 
 ## Resource requests and limits for the connector pod
-resources:
-  {}
+resources: {}
   # requests:
   #   cpu: 250m
   #   memory: 256Mi
@@ -284,6 +287,7 @@ resources:
 
 ## Autoscaling configurations
 autoscaling:
+
   ## Enable connector autoscaling
   enabled: false
 
