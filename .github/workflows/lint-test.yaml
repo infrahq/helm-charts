@@ -12,7 +12,7 @@ jobs:
     outputs:
       charts: ${{ steps.list-changed.outputs.charts }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
@@ -30,7 +30,7 @@ jobs:
       matrix:
         chart: ${{ fromJson(needs.prepare.outputs.charts) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
@@ -46,7 +46,7 @@ jobs:
       matrix:
         chart: ${{ fromJson(needs.prepare.outputs.charts) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: azure/setup-helm@v3
